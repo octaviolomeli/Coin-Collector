@@ -11,15 +11,14 @@ import java.sql.Statement;
 @RestController
 public class EntriesController {
 
+    /**
+     * Returns database entries in the form of JSON regarding the saved slots for loading.
+     * Will return 10 arrays and if not all slots are used, some will contain null
+     * {"data": [["seed in String type", "keyPressHere"], ["seed2", "k2"]]}
+      */
     @GetMapping("/data")
     public Entries data() {
-        /*
-        [
-            ["seed", "keyPresses"]
-            ["seed", "keyPresses"]
-            ["seed", "keyPresses"]
-        ]
-         */
+        // add comment to this function
         String url = "jdbc:postgresql://localhost:5432/CoinCollector";
         String username = "postgres";
         String password = "******";
