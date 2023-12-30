@@ -11,39 +11,36 @@ import java.util.Random;
 public class Engine {
     TERenderer ter = new TERenderer();
     private static String keyStringPresses;
+    public static Long seed;
     public static final int WIDTH = 90;
     public static final int HEIGHT = 47;
     public static final int FRAMERATE = 30;
     public static final int[] INT_MAGIC_NUMBERS = new int[]{1000, 16, 40, 20, 30, 500, 2000, 23};
     public static final double[] DOUBLE_MAGIC_NUMBERS = new double[]{1.5, 1.7, 2.5, 3.7};
-    public static Long seed;
 
     /**
-     * Initializes an Engine with empty key presses.
+     * Initializes an Engine object with seed and keyPresses.
      */
-    public Engine() {
-        keyStringPresses = "";
-    }
     public Engine(String seedArg, String keyPresses) {
-        keyStringPresses = "";
+        if (seedArg.equals("random")) {
+            seed = new Random().nextLong();
+        } else {
+            seed = Long.parseLong(seedArg);
+        }
+        keyStringPresses = keyPresses;
     }
 
     /**
      * Handles user interaction with keyboard. Starts the game.
      */
-    public void interactWithKeyboard() {
-        boolean loading = Boolean.parseBoolean(showMainMenu());
-        long seed = 0;
-        if (!loading) {
-            seed = Long.parseLong(showInputSeedMenu());
-        }
-        Game game = gameSetUp(loading, seed);
+    public void run() {
+        Game game = gameSetUp();
         Point lastMousePosition = new Point((int) StdDraw.mouseX(), (int) StdDraw.mouseY());
         Point currMousePosition;
 
         ter.initialize(WIDTH, HEIGHT, 0, -1);
 
-        char lastPressedKey = 'a';
+        char lastPressedKey = 'b';
 
         while (true) {
             currMousePosition = new Point((int) StdDraw.mouseX(), (int) StdDraw.mouseY());
@@ -61,104 +58,6 @@ public class Engine {
             }
 
             lastMousePosition = new Point((int) StdDraw.mouseX(), (int) StdDraw.mouseY());
-        }
-    }
-
-
-    /**
-     * Shows the Main Menu to the user
-     * @return String Return the rest of the input
-     */
-    private String showMainMenu() {
-        StdDraw.setCanvasSize(WIDTH * INT_MAGIC_NUMBERS[1], HEIGHT * INT_MAGIC_NUMBERS[1]);
-
-        StdDraw.setXscale(0, WIDTH);
-        StdDraw.setYscale(0, HEIGHT);
-        StdDraw.clear(Color.white);
-        StdDraw.setPenColor(Color.black);
-
-        Font titleFont = new Font("Arial", Font.BOLD, INT_MAGIC_NUMBERS[2]);
-        StdDraw.setFont(titleFont);
-        StdDraw.text(WIDTH / 2.0, HEIGHT / DOUBLE_MAGIC_NUMBERS[0], "Coin Collector");
-
-        Font authorFont = new Font("Arial", Font.BOLD, INT_MAGIC_NUMBERS[3]);
-        StdDraw.setFont(authorFont);
-        StdDraw.text(WIDTH / 2.0, HEIGHT / DOUBLE_MAGIC_NUMBERS[1], "Made by Octavio");
-
-        Font menuOptionFont = new Font("Arial", Font.PLAIN, INT_MAGIC_NUMBERS[4]);
-        StdDraw.setFont(menuOptionFont);
-        StdDraw.text(WIDTH / 2.0, HEIGHT / DOUBLE_MAGIC_NUMBERS[2], "New World (N)");
-        StdDraw.text(WIDTH / 2.0, HEIGHT / 3.0, "Load (L)");
-        StdDraw.text(WIDTH / 2.0, HEIGHT / DOUBLE_MAGIC_NUMBERS[3], "Quit (Q)");
-
-        StdDraw.show();
-
-        while (true) {
-            if (StdDraw.hasNextKeyTyped()) {
-                char key = StdDraw.nextKeyTyped();
-                if (key == 'n' || key == 'N') {
-                    return null;
-                } else if (key == 'l' || key == 'L') {
-                    if (noLoadedData()) {
-                        System.exit(0);
-                    }
-                    return "true";
-                } else if (key == 'q' || key == 'Q') {
-                    System.exit(0);
-                }
-            }
-        }
-    }
-
-    /**
-     * Checks if there is data in the database
-     * @return boolean if there is no data
-     */
-    public boolean noLoadedData() {
-        String url = "jdbc:postgresql://localhost:5432/CoinCollector";
-        String username = "postgres";
-        String password = "******";
-        try {
-            Connection con = DriverManager.getConnection(url, username, password);
-            Statement st = con.createStatement();
-            String sql = "SELECT COUNT(*) FROM saved_worlds";
-            ResultSet rs = st.executeQuery(sql);
-            rs.next();
-            int count = rs.getInt(1);
-            con.close();
-            return count == 0;
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-
-    /**
-     * Ask the user for an input seed.
-     * @return String
-     */
-    private String showInputSeedMenu() {
-        StdDraw.clear(Color.white);
-        StdDraw.text(WIDTH / 2.0, HEIGHT / DOUBLE_MAGIC_NUMBERS[0], "Input seed for world. Press (S) when done.");
-
-        StringBuilder result = new StringBuilder();
-
-        while (true) {
-            if (StdDraw.hasNextKeyTyped()) {
-                char key = StdDraw.nextKeyTyped();
-                if (key == 's' || key == 'S') {
-                    if (!result.toString().isEmpty()) {
-                        return result.toString();
-                    }
-                    return Long.toString(new Random().nextLong());
-                } else if (Character.isDigit(key)) {
-                    result.append(key);
-                    StdDraw.clear(Color.white);
-                    StdDraw.text(WIDTH / 2.0, HEIGHT / DOUBLE_MAGIC_NUMBERS[0],
-                            "Input seed for world. Press (S) when done.");
-                    StdDraw.text(WIDTH / 2.0, HEIGHT / DOUBLE_MAGIC_NUMBERS[2], result.toString());
-                }
-            }
         }
     }
 
@@ -216,56 +115,38 @@ public class Engine {
     }
 
     /**
-     * Saves the progress of the Game to the database
-     * @param game Game object
+     * Saves the progress of the Game to the database into the proper row
      */
-    private void saveToDatabase(Game game) {
-        String url = "jdbc:postgresql://localhost:5432/CoinCollector";
-        String username = "postgres";
-        String password = "******";
-        try {
-            Connection con = DriverManager.getConnection(url, username, password);
-            Statement st = con.createStatement();
-            String inputString = keyStringPresses.substring(0, keyStringPresses.length() - 2);
-            String sql = "INSERT INTO saved_worlds(seed, keypresses) VALUES('" + game.getSeed() + "', '" + inputString + "')";
-            st.executeUpdate(sql);
-            con.close();
-        } catch (Exception e) {
-            throw new RuntimeException(e);
+    private void saveToDatabase(int slot) {
+        // Save if the slot # is not 0
+        if (slot != 0) {
+            String url = "jdbc:postgresql://localhost:5432/CoinCollector";
+            String username = "postgres";
+            String password = "*********";
+            try {
+                Connection con = DriverManager.getConnection(url, username, password);
+                Statement st = con.createStatement();
+                String inputString = keyStringPresses.substring(0, keyStringPresses.length() - 2);
+                String sql = "UPDATE saved_worlds SET seed = '" + seed + "', keypresses = '" + inputString + "' WHERE id = " + slot;
+                st.executeUpdate(sql);
+                con.close();
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
         }
     }
 
     /**
-     * Sets up the Game object depending on loading or not.
-     * @param loading boolean if we are loading
-     * @param seed The seed for Random object
+     * Sets up the Game object
      * @return Game object
      */
-    private Game gameSetUp(boolean loading, long seed) {
-        if (loading) {
-            String url = "jdbc:postgresql://localhost:5432/CoinCollector";
-            String username = "postgres";
-            String password = "******";
-            try {
-                Connection con = DriverManager.getConnection(url, username, password);
-                Statement st = con.createStatement();
-                ResultSet rs = st.executeQuery("SELECT * FROM saved_worlds");
-                rs.next();
-                Game loadedGame = new Game(Long.parseLong(rs.getString(2)), WIDTH, HEIGHT);
-                String loadedKeyPresses = rs.getString(3);
-                keyStringPresses += loadedKeyPresses;
-                con.close();
-                char lastPressedKey = 'b';
-                for (char key : loadedKeyPresses.toCharArray()) {
-                    lastPressedKey = keyChecks(key, lastPressedKey, loadedGame, false);
-                }
-                return loadedGame;
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
-        } else {
-            return new Game(seed, WIDTH, HEIGHT);
+    private Game gameSetUp() {
+        Game game = new Game(seed, WIDTH, HEIGHT);
+        char lastPressedKey = 'b';
+        for (char key : keyStringPresses.toCharArray()) {
+            lastPressedKey = keyChecks(key, lastPressedKey, game, false);
         }
+        return game;
     }
 
     /**
@@ -277,8 +158,8 @@ public class Engine {
      * @return Returns the key pressed
      */
     private char keyChecks(char key, char lastPressedKey, Game game, boolean includePauses) {
-        if (lastPressedKey == ':' && (key == 'q' || key == 'Q')) {
-            saveToDatabase(game);
+        if (Character.isDigit(lastPressedKey) && (key == 'q' || key == 'Q')) {
+            saveToDatabase(Integer.parseInt(Character.toString(lastPressedKey)));
             if (includePauses) {
                 System.exit(0);
             }

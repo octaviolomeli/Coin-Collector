@@ -19,12 +19,8 @@ public class CoreApplication {
 
 	@PostMapping("/generateWorld")
 	public void generateWorld(@RequestBody WorldInfo wi) {
-//		Engine newGame = new Engine(wi.getSeed(), wi.getKeyPresses());
-//		newGame.run();
-		System.out.println(wi.getKeyPresses());
-		System.out.println(wi.getSeed());
-		Engine engine = new Engine();
-		engine.interactWithKeyboard();
+		Engine engine = new Engine(wi.getSeed(), wi.getKeyPresses());
+		engine.run();
 	}
 
 	// For mapping JSON to WorldInfo object

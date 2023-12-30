@@ -7,6 +7,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.util.Arrays;
 
 @RestController
 public class EntriesController {
@@ -21,7 +22,7 @@ public class EntriesController {
         // add comment to this function
         String url = "jdbc:postgresql://localhost:5432/CoinCollector";
         String username = "postgres";
-        String password = "************";
+        String password = "*********";
         try {
             Connection con = DriverManager.getConnection(url, username, password);
             Statement st = con.createStatement();

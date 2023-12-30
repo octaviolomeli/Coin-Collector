@@ -10,19 +10,18 @@ window.addEventListener("load", () => {
     .then(slotData => {
         // Create buttons for each saved slot
         const insertElementParent = document.getElementsByClassName("insertHere")[0];
-        let c = 0
+        let c = 0;
         for (const row of slotData.data) {
-            if (row[0] == null) {
-                break;
+            if (row[0] != null) {
+                let slotElement = document.createElement('button');
+                slotElement.innerText = row[0];
+                slotElement.setAttribute("class", "slot");
+                slotElement.onclick = () => {
+                    loadWorld(row[0], row[1]);
+                }
+                insertElementParent.appendChild(slotElement);
+                c += 1;
             }
-            let slotElement = document.createElement('button');
-            slotElement.innerText = row[0];
-            slotElement.setAttribute("class", "slot");
-            slotElement.onclick = () => {
-                loadWorld(row[0], row[1]);
-            }
-            insertElementParent.appendChild(slotElement);
-            c += 1;
         }
         // If no entries
         if ( c == 0 ) {
