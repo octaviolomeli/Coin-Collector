@@ -6,16 +6,30 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
     <link rel="stylesheet" href="./styles.css">
 </head>
+<script>
+    function formSubmit() {
+        var seed = document.getElementById("inputSeed").value;
+        if (seed == "" || isNaN(seed)) {
+            seed = "random";
+        }
+        window.location.href = '/ongoing.html';
+        fetch('/generateWorld', {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({seed: seed, keyPresses: ""})
+        });
+    }
+</script>
 <body style="background-image: url('./images/inputBG.png');">
 <div class="container">
     <div class="row">
         <div class="col-md-4"></div>
         <div class="col-md-4">
             <h1 id="pageHeader">Input Seed</h1>
-            <form method="POST">
-                <input type="number" maxlength="10" name="seed" id="inputSeed">
-                <button type="submit" id="play">Play</button>
-            </form>
+            <input type="text" maxlength="10" name="seed" id="inputSeed">
+            <button id="play" onclick="formSubmit()">Play</button>
         </div>
         <div class="col-md-4"></div>
     </div>
