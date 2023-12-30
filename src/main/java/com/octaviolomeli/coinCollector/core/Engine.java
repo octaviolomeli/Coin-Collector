@@ -16,11 +16,15 @@ public class Engine {
     public static final int FRAMERATE = 30;
     public static final int[] INT_MAGIC_NUMBERS = new int[]{1000, 16, 40, 20, 30, 500, 2000, 23};
     public static final double[] DOUBLE_MAGIC_NUMBERS = new double[]{1.5, 1.7, 2.5, 3.7};
+    public static Long seed;
 
     /**
      * Initializes an Engine with empty key presses.
      */
     public Engine() {
+        keyStringPresses = "";
+    }
+    public Engine(String seedArg, String keyPresses) {
         keyStringPresses = "";
     }
 

@@ -21,7 +21,7 @@ public class EntriesController {
         // add comment to this function
         String url = "jdbc:postgresql://localhost:5432/CoinCollector";
         String username = "postgres";
-        String password = "***********";
+        String password = "************";
         try {
             Connection con = DriverManager.getConnection(url, username, password);
             Statement st = con.createStatement();

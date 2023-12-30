@@ -1,7 +1,8 @@
 package com.octaviolomeli.coinCollector.core;
 
-import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.builder.SpringApplicationBuilder;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -11,7 +12,9 @@ import org.springframework.web.bind.annotation.RestController;
 public class CoreApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(CoreApplication.class, args);
+		SpringApplicationBuilder builder = new SpringApplicationBuilder(CoreApplication.class);
+		builder.headless(false);
+		ConfigurableApplicationContext context = builder.run(args);
 	}
 
 	@PostMapping("/generateWorld")
@@ -20,6 +23,8 @@ public class CoreApplication {
 //		newGame.run();
 		System.out.println(wi.getKeyPresses());
 		System.out.println(wi.getSeed());
+		Engine engine = new Engine();
+		engine.interactWithKeyboard();
 	}
 
 	// For mapping JSON to WorldInfo object
