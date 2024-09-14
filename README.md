@@ -7,8 +7,8 @@
 ### Relevant Directories
 <ul>
   <li><a href="https://github.com/octaviolomeli/Coin-Collector/tree/main/src/test/java/com/octaviolomeli/coinCollector/core">Tests</a></li>
-  <li><a href="https://github.com/octaviolomeli/Coin-Collector/tree/main/src/test/java/com/octaviolomeli/coinCollector/core](https://github.com/octaviolomeli/Coin-Collector/tree/main/src/main/resources/static">Frontend</a></li>
-  <li><a href="https://github.com/octaviolomeli/Coin-Collector/tree/main/src/test/java/com/octaviolomeli/coinCollector/core](https://github.com/octaviolomeli/Coin-Collector/tree/main/src/main/java/com/octaviolomeli/coinCollector/core">Backend</a></li>
+  <li><a href="https://github.com/octaviolomeli/Coin-Collector/tree/main/src/main/resources/static">Frontend</a></li>
+  <li><a href="https://github.com/octaviolomeli/Coin-Collector/tree/main/src/main/java/com/octaviolomeli/coinCollector/core">Backend</a></li>
 </ul>
 
 
